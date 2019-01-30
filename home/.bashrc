@@ -104,9 +104,6 @@ alias latexmkspeciale="grep -l '\\documentclass' *tex | xargs latexmk -pdf -pvc 
 alias ll="ls -lh"
 alias f="find . -iname "
 
-# Fedora
-alias vim='vimx'
-
 # eclim daemon
 #/opt/eclipse/eclimd
 
