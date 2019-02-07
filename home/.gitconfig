@@ -1,4 +1,9 @@
-# This is Git's per-user configuration file.
 [user]
-	name = Maxiwell Salvador Garcia
+	name = Maxiwell S. Garcia
 	email = maxiwell@linux.ibm.com
+[push]
+	default = simple
+[color]
+	ui = auto
+[core]
+	excludesFile = /home/maxiwell/.gitdir/gitignore
