@@ -5,17 +5,8 @@
 # the files are located in the bash-doc package.
 
 # set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.bin" ] ; then
-    export PATH=$HOME/.bin:$PATH
-fi
-
-if [ -d "$HOME/.local/bin" ] ; then
-    export PATH=$HOME/.local/bin:$PATH
-fi
-
-if [ -d "$HOME/.local/usr/bin" ] ; then
-    export PATH=$HOME/.local/usr/bin:$PATH
-fi
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/usr/bin:$PATH
 
 #if [ -d "/usr/lib/ccache" ]; then
 #    export PATH=/usr/lib/ccache:$PATH
