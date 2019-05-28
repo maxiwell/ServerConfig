@@ -134,3 +134,9 @@ PROMPT_COMMAND="run_on_prompt_command"
 # Remove PATH duplicates
 PATH=$(printf %s "$PATH" | awk -v RS=: -v ORS=: '{ if (!arr[$0]++) { print $0 } }')
 
+export EDITOR=vim
+export GIT_EDITOR=$EDITOR
+export VISUAL=$EDITOR
+
+export LANG=en_US.UTF8
+export LC_ALL=en_US.UTF8
