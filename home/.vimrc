@@ -140,9 +140,6 @@ set rtp+=~/.vim/bundle/Vundle.vim
 
 call vundle#begin()
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
 " plugin on GitHub
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'majutsushi/tagbar.git'
@@ -226,6 +223,9 @@ nnoremap <Leader>l     :CtrlPMRU<cr>
 nnoremap <Leader>;     :CtrlPMixed<cr>
 "nnoremap <Leader>ta    :CtrlPTag<cr>
 "nnoremap <Leader>tb    :CtrlPBufTag<cr>
+
+let g:ctrlp_custom_ignore = 'node_modules\|git\|vendor'
+
 
 "--------------------------------------------------------------------------------
 " TagBar
@@ -551,5 +551,3 @@ nmap <C-\>E :cs find e
 "let g:multi_cursor_prev_key='<C-p>'
 "let g:multi_cursor_skip_key='<C-x>'
 "let g:multi_cursor_quit_key='<Esc>'
-
-

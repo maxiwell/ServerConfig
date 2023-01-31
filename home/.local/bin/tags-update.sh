@@ -55,6 +55,10 @@ for i in $@; do
             ARGS="${ARGS} py "
             shift
             ;;
+        -php)
+            ARGS="${ARGS} php "
+            shift
+            ;;
         --help|-h)
             usage
             exit 0
@@ -81,6 +85,9 @@ for i in $@; do
             fi
             if [[ $ARGS == *" py "* ]]; then
                 find `pwd` -iname '*.py' | grep -v build\/ >> $DIR/files
+            fi
+            if [[ $ARGS == *" php "* ]]; then
+                find `pwd` -iname '*.php' | grep -v build\/ >> $DIR/files
             fi
             cd - &> /dev/null
 
