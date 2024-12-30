@@ -170,7 +170,7 @@ filetype plugin indent on    " required
 "--------------------------------------------------------------------------------
 
 " set the default color scheme
-colorscheme peachpuff
+" colorscheme peachpuff
 " colorscheme molokai
 
 hi Visual cterm=reverse ctermfg=NONE ctermbg=NONE
@@ -433,10 +433,10 @@ endif
 nnoremap K :grep! "\b<C-R><C-W>\b" *.*<CR>:cw<CR>
 
 " \g: Search in c/cpp/h git-files using Fugitive Ggrep
-nnoremap <leader>g :Ggr <C-R><C-W> -- *.c *.cc *.cpp *.h *.hpp<CR>
+nnoremap <Leader>g :Ggr <C-R><C-W> -- *.c *.cc *.cpp *.h *.hpp<CR>
 
 " \a: Search in all git-file using Fugitive Ggrep
-nnoremap <leader>a :Ggr <C-R><C-W><CR>
+nnoremap <Leader>a :Ggr <C-R><C-W><CR>
 
 " This trigger takes advantage of the fact that the quickfix window can be
 " easily distinguished by its file-type, qf. The wincmd J command is
@@ -541,6 +541,10 @@ nmap <C-\>E :cs find e
 " m/           Open location list and display marks from current buffer
 "
 " More here: github.com/kshenoy/vim-signature
+
+highlight SignatureMarkText ctermbg=Brown ctermfg=Black
+hi SignColumn ctermbg=none
+
 
 "--------------------------------------------------------------------------------
 " multiple-cursors

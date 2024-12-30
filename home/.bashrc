@@ -101,8 +101,6 @@ alias egrep='egrep --color'
 alias sudo_env='sudo env PATH=$PATH'
 alias latexmkspeciale="grep -l '\\documentclass' *tex | xargs latexmk -pdf -pvc -silent"
 alias ll="ls -lh"
-alias f="find . -iname "
-
 # eclim daemon
 #/opt/eclipse/eclimd
 
@@ -141,6 +139,15 @@ export VISUAL=$EDITOR
 export LANG=en_US.UTF8
 export LC_ALL=en_US.UTF8
 
-#export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Comment the NVM block to launch the bash faster
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export CONAG_PROJ=/home/maxiwell/devel/sysconag-rasgado/
+alias fc="find $CONAG_PROJ -iname "
+alias f="find . -iname "
+alias grepc="grep $CONAG_PROJ -RIi --exclude-dir=vendor --exclude-dir=public --exclude-dir=modules --exclude-dir='.php*' --exclude-dir=.tags --exclude='.php*' -e"
+alias cdc="cd $CONAG_PROJ"
+
+alias v="code -r"

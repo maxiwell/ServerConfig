@@ -24,6 +24,7 @@ usage() {
     echo "      -c   : Find only .c and .h files"
     echo "      -c++ : Find only .cpp, .cc, and .h files"
     echo "      -py  : Find only .py files"
+    echo "      -php : Find only .php files"
     echo ""
 }
 
@@ -87,7 +88,7 @@ for i in $@; do
                 find `pwd` -iname '*.py' | grep -v build\/ >> $DIR/files
             fi
             if [[ $ARGS == *" php "* ]]; then
-                find `pwd` -iname '*.php' | grep -v build\/ >> $DIR/files
+                find `pwd` -iname '*.php' | grep -v build | grep -v vendor >> $DIR/files
             fi
             cd - &> /dev/null
 

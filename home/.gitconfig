@@ -7,3 +7,5 @@
 	ui = auto
 [core]
 	excludesFile = /home/maxiwell/.gitdir/gitignore
+[safe]
+	directory = /var/www/rasgado
