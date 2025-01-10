@@ -94,6 +94,8 @@ inoremap <silent> <C-l>      <ESC>:bn<CR>
 
 " C/C++: Fix { } indent inside 'switch' statement
 set cino=l1
+" Fix arguments indentation
+set cino+=(0
 
 function NumberNo()
     set nonumber
