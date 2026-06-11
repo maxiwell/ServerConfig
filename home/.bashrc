@@ -140,14 +140,115 @@ export LANG=en_US.UTF8
 export LC_ALL=en_US.UTF8
 
 # Comment the NVM block to launch the bash faster
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+nvm use 20 &> /dev/null
 
-export CONAG_PROJ=/home/maxiwell/devel/sysconag-rasgado/
+export CONAG_PROJ=/home/maxiwell/devel/rasgado/
+grepc() {
+    grep -RIi \
+        --exclude-dir=vendor \
+        --exclude-dir=modules \
+        --exclude-dir=.tags \
+        --exclude='*.php*' \
+        -e "$1" \
+        $CONAG_PROJ $CONAG_PROJ/public/assets/js
+    }
+
 alias fc="find $CONAG_PROJ -iname "
 alias f="find . -iname "
-alias grepc="grep $CONAG_PROJ -RIi --exclude-dir=vendor --exclude-dir=public --exclude-dir=modules --exclude-dir='.php*' --exclude-dir=.tags --exclude='.php*' -e"
 alias cdc="cd $CONAG_PROJ"
 
 alias v="code -r"
+
+wtmux() {
+  if [ -z "$1" ]; then
+    echo "uso: wtmux <caminho-do-worktree>"
+    return 1
+  fi
+  local dest
+  dest=$(realpath "$1") || return 1
+  if [ ! -d "$dest" ]; then
+    echo "diretório não existe: $dest"
+    return 1
+  fi
+
+  local session
+  session=$(tmux display-message -p '#{session_name}')
+
+  local p path root rel target
+  while IFS=$'\t' read -r p path; do
+    # descobre a raiz do worktree onde o pane está
+    root=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null)
+    if [ -n "$root" ]; then
+      rel=${path#"$root"}        # sufixo relativo, ex: /src/foo
+      target="$dest$rel"
+    else
+      target="$dest"             # pane fora de um git worktree → vai pra raiz do novo
+    fi
+    # se o subdir não existir no novo worktree, cai na raiz
+    [ -d "$target" ] || target="$dest"
+    tmux send-keys -t "$p" " cd \"$target\"" C-m
+  done < <(tmux list-panes -s -t "$session" -F '#{pane_id}'$'\t''#{pane_current_path}')
+}
+
+# Propaga cd pra todos os panes da sessao (mantendo sufixo relativo dentro do worktree)
+# e atualiza o OSC 7 do terminal externo (VSCode) pra usar como base de paths relativos.
+wt() {
+    if [ -z "$1" ]; then
+        echo "uso: wt <dir>" >&2
+        return 1
+    fi
+    local dest
+    dest=$(realpath "$1") || return 1
+    if [ ! -d "$dest" ]; then
+        echo "diretorio nao existe: $dest" >&2
+        return 1
+    fi
+
+    local osc7
+    printf -v osc7 '\033]7;file://%s%s\033\\' "${HOSTNAME}" "$dest"
+
+    if [ -n "$TMUX" ]; then
+        local session
+        session=$(tmux display-message -p '#{session_name}')
+
+        local p path root rel target
+        while IFS=$'\t' read -r p path; do
+            root=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null)
+            if [ -n "$root" ]; then
+                rel=${path#"$root"}
+                target="$dest$rel"
+            else
+                target="$dest"
+            fi
+            [ -d "$target" ] || target="$dest"
+            tmux send-keys -t "$p" " cd \"$target\"" C-m
+        done < <(tmux list-panes -s -t "$session" -F '#{pane_id}'$'\t''#{pane_current_path}')
+
+        # OSC 7 via DCS passthrough do tmux: escapes internos viram \e\e
+        printf '\033Ptmux;%s\033\\' "${osc7//$'\033'/$'\033\033'}"
+    else
+        cd "$dest" || return 1
+        printf '%s' "$osc7"
+    fi
+}
+
+# Igual ao wt, mas tambem renomeia a sessao do tmux com o nome do diretorio destino.
+wts() {
+    if [ -z "$1" ]; then
+        echo "uso: wts <dir>" >&2
+        return 1
+    fi
+    wt "$1" || return 1
+
+    if [ -n "$TMUX" ]; then
+        local dest name
+        dest=$(realpath "$1") || return 1
+        # tmux nao aceita '.' nem ':' em nomes de sessao
+        name=$(basename "$dest")
+        name=${name//[.:]/_}
+        tmux rename-session "$name"
+    fi
+}

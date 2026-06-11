@@ -23,6 +23,9 @@ set encoding=utf-8
 set wildmode=longest,list,full
 set wildmenu
 
+" The <leader> is the key \
+vnoremap <leader>y :w !xclip -selection clipboard<CR><CR>
+
 "highlight ExtraWhitespace ctermbg=red guibg=red
 "match ExtraWhitespace /\s\+$/
 
@@ -41,6 +44,15 @@ set viminfo='1000,f1
 set ttymouse=xterm2
 " Send more characters for redraws
 set ttyfast
+
+" Bracketed paste: faz o vim reconhecer os marcadores de colagem mesmo dentro
+" de tmux/screen e quando aberto como editor externo (ex.: Ctrl+G do Claude
+" Code). Sem isso, Shift+Insert manda ESC[200~ que o vim lê como <Esc> e sai
+" do modo de inserção, embaralhando o texto (e nem :set paste resolve).
+let &t_BE = "\<Esc>[?2004h"
+let &t_BD = "\<Esc>[?2004l"
+let &t_PS = "\<Esc>[200~"
+let &t_PE = "\<Esc>[201~"
 
 " Any buffer can be hidden (keeping its changes) without first writing
 " the buffer to a file
@@ -156,9 +168,12 @@ Plugin 'will133/vim-dirdiff'
 Plugin 'scrooloose/nerdtree'
 "Plugin 'vim-scripts/Conque-GDB'
 "Plugin 'terryma/vim-multiple-cursors'
+Plugin 'ojroques/vim-oscyank'
 
 " GIT wrapper
 Plugin 'tpope/vim-fugitive'
+
+Plugin 'tpope/vim-tbone'
 
 "Scala Plugin
 "Plugin 'derekwyatt/vim-scala'
@@ -531,7 +546,7 @@ nmap <C-\>F :cs find f
 nmap <C-\>E :cs find e 
 
 "--------------------------------------------------------------------------------
-" Signature (marks clever)
+" signature (marks clever)
 "--------------------------------------------------------------------------------
 
 " Default Shortcuts:
@@ -557,3 +572,9 @@ hi SignColumn ctermbg=none
 "let g:multi_cursor_prev_key='<C-p>'
 "let g:multi_cursor_skip_key='<C-x>'
 "let g:multi_cursor_quit_key='<Esc>'
+
+"--------------------------------------------------------------------------------
+" tbone
+"--------------------------------------------------------------------------------
+vnoremap ty :Tyank<CR>
+nnoremap tp :Tput<CR>
