@@ -1,0 +1,10 @@
+#!/bin/bash
+
+wt_path="${@: -1}"
+
+worktree_name=$(basename "$wt_path")
+session_name=$(echo "$worktree_name" | tr '.' '_')
+
+git worktree remove $worktree_name
+tmux has-session -t "$session_name" 2>/dev/null && tmux kill-session -t "$session_name"
+git branch -d $worktree_name

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+wt_path="${@: -1}"
+
+worktree_name=$(basename "$wt_path")
+
+# Se já existir uma branch com esse nome, usa ela no worktree; senão deixa o git criar uma nova
+if git show-ref --verify --quiet "refs/heads/$worktree_name"; then
+    git worktree add worktree/$worktree_name $worktree_name
+else
+    git worktree add worktree/$worktree_name
+fi
+cd worktree/$worktree_name
+cd config && ln -s ../../../config/devel && cd -
+
+# .claude não é versionado; sem esse symlink os skills/CLAUDE.md não carregam no worktree
+[ -e .claude ] || ln -s ../../.claude .claude
+./scripts/deploy.sh
+
+# Limpa caracteres especiais que o tmux não aceita em nomes de sessão (como pontos)
+SESSION_NAME=$(echo "$worktree_name" | tr '.' '_')
+
+# Cria a sessão detached (sem migrar pra ela), já com o diretório inicial no worktree
+WT_ABS="$PWD"
+tmux has-session -t "$SESSION_NAME" 2>/dev/null || tmux new-session -d -s "$SESSION_NAME" -c "$WT_ABS"
+
+# .vscode é gitignored; o terminal padrão do VSCode desse worktree entra direto na sessão do tmux
+mkdir -p .vscode
+[ -e .vscode/settings.json ] || cat > .vscode/settings.json <<EOF
+{
+    "terminal.integrated.defaultProfile.linux": "tmux-worktree",
+    "terminal.integrated.profiles.linux": {
+        "tmux-worktree": {
+            "path": "tmux",
+            "args": ["new-session", "-A", "-s", "$SESSION_NAME"]
+        }
+    }
+}
+EOF
+
+# O remote-cli do VSCode precisa do socket IPC; dentro do tmux ele costuma estar ausente/vencido
+if [ -z "$VSCODE_IPC_HOOK_CLI" ] || [ ! -S "$VSCODE_IPC_HOOK_CLI" ]; then
+    export VSCODE_IPC_HOOK_CLI=$(ls -t /run/user/$(id -u)/vscode-ipc-*.sock 2>/dev/null | head -1)
+fi
+
+if command -v code >/dev/null 2>&1 && [ -n "$VSCODE_IPC_HOOK_CLI" ]; then
+    code -n "$WT_ABS"
+else
+    echo "VSCode CLI indisponível; abra manualmente: code -n $WT_ABS"
+fi
+
+echo "Sessão tmux '$SESSION_NAME' criada (detached). Para entrar: tmux attach -t $SESSION_NAME"
