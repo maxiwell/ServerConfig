@@ -8,6 +8,14 @@ settings = "prefix+shift+s"
 
 [ui]
 tab_bar_position = "bottom"
+tab_bar_right = [
+  { type = "zoom" },
+  { type = "command", command = "b=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) && echo \"[$b]\"", interval_seconds = 2, timeout_seconds = 1 },
+  { type = "hostname" },
+  { type = "datetime", format = "%d/%m" },
+  { type = "datetime", format = "%H:%M:%S" },
+]
+tab_bar_right_separator = " "
 
 [theme]
 name = "catppuccin"
