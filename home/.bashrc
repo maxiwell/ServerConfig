@@ -145,7 +145,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 nvm use 20 &> /dev/null
 
-export CONAG_PROJ=/home/maxiwell/devel/rasgado/
+export CONAG_PROJ=$HOME/devel/rasgado/
 #grepc() {
 #    grep -RIi \
 #        --exclude-dir=vendor \
@@ -257,4 +257,4 @@ wts() {
 }
 
 # opencode
-export PATH=/home/maxiwell/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
