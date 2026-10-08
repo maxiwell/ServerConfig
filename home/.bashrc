@@ -255,3 +255,6 @@ wts() {
         tmux rename-session "$name"
     fi
 }
+
+# opencode
+export PATH=/home/maxiwell/.opencode/bin:$PATH
