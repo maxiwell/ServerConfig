@@ -146,21 +146,24 @@ export NVM_DIR="$HOME/.nvm"
 nvm use 20 &> /dev/null
 
 export CONAG_PROJ=/home/maxiwell/devel/rasgado/
-grepc() {
-    grep -RIi \
-        --exclude-dir=vendor \
-        --exclude-dir=modules \
-        --exclude-dir=.tags \
-        --exclude='*.php*' \
-        -e "$1" \
-        $CONAG_PROJ $CONAG_PROJ/public/assets/js
-    }
+#grepc() {
+#    grep -RIi \
+#        --exclude-dir=vendor \
+#        --exclude-dir=modules \
+#        --exclude-dir=.tags \
+#        --exclude='*.php*' \
+#        -e "$1" \
+#        $CONAG_PROJ $CONAG_PROJ/public/assets/js
+#    }
 
 alias fc="find $CONAG_PROJ -iname "
 alias f="find . -iname "
 alias cdc="cd $CONAG_PROJ"
 
 alias v="code -r"
+
+# herdr: sem as vars de SSH ele copia via xclip (X11 forwarding) em vez de OSC 52, que o terminal local ignora
+alias herdr='env -u SSH_CONNECTION -u SSH_TTY herdr'
 
 wtmux() {
   if [ -z "$1" ]; then
