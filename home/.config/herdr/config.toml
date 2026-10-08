@@ -1,0 +1,14 @@
+onboarding = false
+
+[keys]
+prefix = "ctrl+a"
+last_pane = "prefix+a"
+workspace_picker = ["prefix+w", "prefix+s"]
+settings = "prefix+shift+s"
+
+[ui]
+tab_bar_position = "bottom"
+
+[theme]
+name = "catppuccin"
+auto_switch = false
