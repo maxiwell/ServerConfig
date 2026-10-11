@@ -7,10 +7,13 @@ workspace_picker = ["prefix+w", "prefix+s"]
 settings = "prefix+shift+s"
 
 [ui]
+sidebar_start_collapsed = true
+sidebar_collapsed_mode = "compact"
 tab_bar_position = "bottom"
 tab_bar_right = [
   { type = "zoom" },
-  { type = "command", command = "b=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) && echo \"[$b]\"", interval_seconds = 2, timeout_seconds = 1 },
+  { type = "command", command = "~/.config/herdr/git-info.sh", interval_seconds = 2, timeout_seconds = 1 },
+  { type = "command", command = "~/.config/herdr/claude-usage.py", interval_seconds = 30, timeout_seconds = 1 },
   { type = "hostname" },
   { type = "datetime", format = "%d/%m" },
   { type = "datetime", format = "%H:%M:%S" },
@@ -20,3 +23,11 @@ tab_bar_right_separator = " "
 [theme]
 name = "catppuccin"
 auto_switch = false
+
+[ui.sidebar.agents]
+row_gap = 0
+rows = [
+  ["state_icon", "machine", "agent"],
+  [{ token = "$model", fg = "#d97757" }],
+  [{ token = "workspace", dim = true }, { token = "tab", dim = true }],
+]
