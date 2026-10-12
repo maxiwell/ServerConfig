@@ -6,6 +6,14 @@ last_pane = "prefix+a"
 workspace_picker = ["prefix+w", "prefix+s"]
 settings = "prefix+shift+s"
 
+# prefix+u: popup com detalhes das cotas do Claude (percentual, renovação, quanto falta)
+[[keys.command]]
+key = "prefix+u"
+type = "popup"
+command = "~/.config/herdr/claude-usage.py --full"
+width = "60%"
+height = "40%"
+
 [ui]
 sidebar_start_collapsed = true
 sidebar_collapsed_mode = "compact"
