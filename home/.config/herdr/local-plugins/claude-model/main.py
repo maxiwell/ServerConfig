@@ -52,6 +52,9 @@ def main():
         return
     for pane in panes:
         if pane.get("agent") != "claude":
+            # painel que deixou de ser Claude: remove o modelo antigo
+            if "model" in (pane.get("tokens") or {}):
+                herdr("pane", "report-metadata", pane["pane_id"], "--source", "claude-model", "--clear-token", "model")
             continue
         sid = (pane.get("agent_session") or {}).get("value")
         hits = list(PROJECTS.glob(f"*/{sid}.jsonl")) if sid else []
