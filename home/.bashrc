@@ -262,3 +262,14 @@ wts() {
 
 # opencode
 export PATH=$HOME/.opencode/bin:$PATH
+
+# hermes: CLI do Hermes Agent (container hermes-poc, /srv/ai-lab)
+#   hermes -p ws-rasgado chat        conversa interativa
+#   hermes -p ws-rasgado -z "..."    pergunta única
+# Só define se não houver um executável hermes no PATH (type -P ignora funções e aliases)
+if ! type -P hermes >/dev/null; then
+    hermes() {
+        local tty=(-i); [ -t 0 ] && [ -t 1 ] && tty=(-it)
+        HERDR_AGENT=hermes docker exec "${tty[@]}" -u 1000:1000 hermes-poc /opt/hermes/.venv/bin/hermes "$@"
+    }
+fi
