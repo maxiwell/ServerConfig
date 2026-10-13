@@ -3,8 +3,18 @@
 wt_path="${@: -1}"
 
 worktree_name=$(basename "$wt_path")
-session_name=$(echo "$worktree_name" | tr '.' '_')
+
+# Fecha o workspace do herdr associado ao worktree (se estiver aberto)
+if command -v herdr >/dev/null 2>&1; then
+    wt_abs=$(git worktree list --porcelain | awk -v n="$worktree_name" '/^worktree /{p=substr($0,10)} p ~ "/"n"$" {print p; exit}')
+    ws_id=$(herdr workspace list 2>/dev/null | python3 -c '
+import json, sys
+for w in json.load(sys.stdin)["result"]["workspaces"]:
+    if w.get("worktree", {}).get("checkout_path") == sys.argv[1]:
+        print(w["workspace_id"]); break
+' "$wt_abs")
+    [ -n "$ws_id" ] && herdr workspace close "$ws_id" >/dev/null
+fi
 
 git worktree remove $worktree_name
-tmux has-session -t "$session_name" 2>/dev/null && tmux kill-session -t "$session_name"
 git branch -d $worktree_name

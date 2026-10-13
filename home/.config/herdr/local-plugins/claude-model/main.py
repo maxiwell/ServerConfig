@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Informa ao herdr o modelo de cada painel do Claude (token $model da sidebar).
+"""Informa ao herdr o modelo e o contexto usado de cada painel do Claude
+(tokens $model e $ctx da sidebar).
 
-Roda nos eventos de agente do herdr; lê o modelo da última resposta na
-transcrição da sessão (~/.claude/projects/*/<session>.jsonl).
+Roda nos eventos de agente do herdr; lê o modelo e o uso de tokens da última
+resposta na transcrição da sessão (~/.claude/projects/*/<session>.jsonl).
+Tamanho da janela: CLAUDE_CTX_WINDOW (env) ou 1M (Haiku: 200k).
 """
 import json, os, pathlib, re, subprocess
 
@@ -17,6 +19,24 @@ def pretty(model_id):
         return model_id
     name, major, minor = m.groups()
     return f"{name.capitalize()} {major}" + (f".{minor}" if minor else "")
+
+
+def window(model_id, used):
+    if os.environ.get("CLAUDE_CTX_WINDOW"):
+        return int(os.environ["CLAUDE_CTX_WINDOW"])
+    if "haiku" in model_id and used <= 200_000:
+        return 200_000
+    return 1_000_000
+
+
+def ctx_bar(model_id, usage):
+    used = sum(usage.get(k) or 0 for k in
+               ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens"))
+    if not used:
+        return None
+    pct = min(1.0, used / window(model_id, used))
+    k = f"{used / 1000:.0f}k" if used < 1_000_000 else f"{used / 1e6:.1f}M"
+    return f"{pct * 100:.0f}% {k}"
 
 
 def from_transcript(path):
@@ -36,8 +56,8 @@ def from_transcript(path):
             continue
         model = msg.get("model")
         if isinstance(model, str) and model.startswith("claude-"):
-            return model
-    return None
+            return model, msg.get("usage") or {}
+    return None, {}
 
 
 def herdr(*args):
@@ -53,13 +73,16 @@ def main():
     for pane in panes:
         if pane.get("agent") != "claude":
             # painel que deixou de ser Claude: remove o modelo antigo
-            if "model" in (pane.get("tokens") or {}):
-                herdr("pane", "report-metadata", pane["pane_id"], "--source", "claude-model", "--clear-token", "model")
+            stale = [t for t in ("model", "ctx") if t in (pane.get("tokens") or {})]
+            if stale:
+                herdr("pane", "report-metadata", pane["pane_id"], "--source", "claude-model",
+                      *[a for t in stale for a in ("--clear-token", t)])
             continue
         sid = (pane.get("agent_session") or {}).get("value")
         hits = list(PROJECTS.glob(f"*/{sid}.jsonl")) if sid else []
-        model = from_transcript(hits[0]) if hits else None
-        want = {"model": f"✳ {pretty(model)}" if model else None}
+        model, usage = from_transcript(hits[0]) if hits else (None, {})
+        want = {"model": f"✳ {pretty(model)}" if model else None,
+                "ctx": ctx_bar(model, usage) if model else None}
         have = pane.get("tokens") or {}
         args = []
         for name, value in want.items():

@@ -17,6 +17,7 @@ height = "40%"
 [ui]
 sidebar_start_collapsed = true
 sidebar_collapsed_mode = "compact"
+status_indicators = "symbols"
 tab_bar_position = "bottom"
 tab_bar_right = [
   { type = "zoom" },
@@ -36,6 +37,6 @@ auto_switch = false
 row_gap = 0
 rows = [
   ["state_icon", "machine", "agent"],
-  [{ token = "$model", fg = "#d97757" }],
+  [{ token = "$model", fg = "#d97757" }, { token = "$ctx", dim = true }],
   [{ token = "workspace", dim = true }, { token = "tab", dim = true }],
 ]
