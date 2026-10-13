@@ -15,7 +15,13 @@ cd config && ln -s ../../../config/devel && cd -
 
 # .claude não é versionado; sem esse symlink os skills/CLAUDE.md não carregam no worktree
 [ -e .claude ] || ln -s ../../.claude .claude
-./scripts/deploy.sh
+
+# deploy.sh depende do composer; sem ele falha logo no início
+if command -v composer >/dev/null 2>&1; then
+    ./scripts/deploy.sh
+else
+    echo "composer não encontrado; deploy pulado. Depois de instalar, rode: ./scripts/deploy.sh"
+fi
 
 WT_ABS="$PWD"
 
