@@ -133,6 +133,13 @@ run_on_prompt_command()
 
 PROMPT_COMMAND="run_on_prompt_command"
 
+# Garante os bins locais mesmo em shell não-login (ex: painéis do herdr/tmux
+# cujo server foi iniciado sem passar pelo ~/.profile)
+for d in "$HOME/.local/bin" "$HOME/.local/usr/bin"; do
+    case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH";; esac
+done
+unset d
+
 # Remove PATH duplicates
 PATH=$(printf %s "$PATH" | awk -v RS=: -v ORS=: '{ if (!arr[$0]++) { print $0 } }')
 
