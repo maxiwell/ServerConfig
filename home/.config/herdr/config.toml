@@ -30,8 +30,12 @@ tab_bar_right = [
 tab_bar_right_separator = " "
 
 [theme]
-name = "catppuccin"
+name = "vesper"
 auto_switch = false
+
+# destaque mais visível para o item selecionado (roxo)
+# [theme.custom]
+# active_row_bg = "#3e3560"
 
 [ui.sidebar.agents]
 row_gap = 0
