@@ -30,7 +30,7 @@ tab_bar_right = [
 tab_bar_right_separator = " "
 
 [theme]
-name = "vesper"
+name = "rose-pine"
 auto_switch = false
 
 # destaque mais visível para o item selecionado (roxo)
