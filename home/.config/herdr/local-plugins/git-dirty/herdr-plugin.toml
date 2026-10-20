@@ -1,0 +1,20 @@
+id = "git-dirty"
+name = "Git dirty"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Mostra na sidebar ($branch) a branch de cada workspace, com • quando há alterações não commitadas"
+platforms = ["linux"]
+
+[[startup]]
+command = ["python3", "main.py"]
+
+[[events]]
+on = "pane.agent_status_changed"
+command = ["python3", "main.py"]
+
+[[actions]]
+id = "refresh"
+title = "Git dirty: atualizar"
+description = "Relê o estado do git de todos os workspaces"
+contexts = ["global"]
+command = ["python3", "main.py"]

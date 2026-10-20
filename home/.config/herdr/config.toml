@@ -44,3 +44,13 @@ rows = [
   [{ token = "$model", fg = "#d97757" }, { token = "$ctx", dim = true }],
   [{ token = "workspace", dim = true }, { token = "tab", dim = true }],
 ]
+
+# plugin git-dirty: $branch no lugar de "branch", e "✎" quando há alterações
+# ($branch_dirty ao lado da branch; $dirty na linha do nome, quando a branch
+# tem o nome do workspace)
+[ui.sidebar.spaces]
+row_gap = 0
+rows = [
+  ["state_icon", "workspace", { token = "$dirty", fg = "#f6c177" }],
+  [{ token = "$branch", dim = true }, { token = "$branch_dirty", fg = "#f6c177" }, "git_status"],
+]
