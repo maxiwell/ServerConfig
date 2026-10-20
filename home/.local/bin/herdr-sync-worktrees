@@ -1,0 +1,50 @@
+#!/bin/bash
+# Abre no herdr (menu lateral) os worktrees do git que ainda não têm workspace aberto.
+# Uso: herdr-sync-worktrees [-n|--dry-run] [caminho-do-repo]   (padrão: diretório atual)
+
+dry_run=0
+if [ "$1" = "-n" ] || [ "$1" = "--dry-run" ]; then
+    dry_run=1
+    shift
+fi
+
+repo="$(realpath "${1:-$PWD}")"
+
+if ! command -v herdr >/dev/null 2>&1; then
+    echo "herdr não encontrado no PATH" >&2
+    exit 1
+fi
+
+lista=$(herdr worktree list --cwd "$repo") || exit 1
+source_ws=$(jq -r '.result.source.source_workspace_id // empty' <<< "$lista")
+
+# Bare e prunable (pasta já apagada) não têm o que abrir
+pendentes=$(jq -r '.result.worktrees[]
+    | select(.open_workspace_id == null and (.is_bare | not) and (.is_prunable | not))
+    | .path' <<< "$lista")
+
+if [ -z "$pendentes" ]; then
+    echo "Todos os worktrees já estão no herdr."
+    exit 0
+fi
+
+# --workspace e --cwd são exclusivos; com o workspace do checkout principal o worktree entra agrupado sob ele
+ws_args=(--cwd "$repo")
+[ -n "$source_ws" ] && ws_args=(--workspace "$source_ws")
+
+falhas=0
+while IFS= read -r wt; do
+    if [ "$dry_run" = 1 ]; then
+        echo "abriria: $wt"
+        continue
+    fi
+
+    if herdr worktree open "${ws_args[@]}" --path "$wt" --no-focus >/dev/null; then
+        echo "aberto: $wt"
+    else
+        echo "falhou: $wt" >&2
+        falhas=$((falhas + 1))
+    fi
+done <<< "$pendentes"
+
+[ "$falhas" -eq 0 ]
