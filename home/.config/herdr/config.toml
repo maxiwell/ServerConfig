@@ -21,7 +21,7 @@ status_indicators = "symbols"
 tab_bar_position = "bottom"
 tab_bar_right = [
   { type = "zoom" },
-  { type = "command", command = "~/.config/herdr/git-info.sh", interval_seconds = 2, timeout_seconds = 1 },
+  { type = "command", command = "~/.config/herdr/git-info.sh", interval_seconds = 10, timeout_seconds = 1 },
   { type = "command", command = "~/.config/herdr/claude-usage.py", interval_seconds = 30, timeout_seconds = 1 },
   { type = "hostname" },
   { type = "datetime", format = "%d/%m" },

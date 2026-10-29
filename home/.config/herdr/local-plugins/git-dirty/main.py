@@ -5,7 +5,7 @@ lado da branch). Se a branch tem o nome do workspace, não a repete: o "✎" vai
 para o token $dirty, na linha do nome.
 
 Roda nos eventos de agente do herdr e também a cada tick do git-info.sh
-(tab bar), para pegar edições feitas fora dos agentes.
+(tab bar, no máximo a cada 30 s), para pegar edições feitas fora dos agentes.
 """
 import fcntl, json, os, pathlib, shutil, subprocess
 
