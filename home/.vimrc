@@ -243,6 +243,10 @@ nnoremap <Leader>;     :CtrlPMixed<cr>
 
 let g:ctrlp_custom_ignore = 'node_modules\|git\|vendor'
 
+" open the file in the current window, even if it is NERDTree/help/quickfix
+" (by default CtrlP opens a vertical split when there is no normal window)
+let g:ctrlp_reuse_window = 'netrw\|help\|quickfix\|nerdtree'
+
 
 "--------------------------------------------------------------------------------
 " TagBar
