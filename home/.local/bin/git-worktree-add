@@ -1,6 +1,7 @@
 #!/bin/bash
 
 wt_path="${@: -1}"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 worktree_name=$(basename "$wt_path")
 
@@ -25,10 +26,10 @@ fi
 
 WT_ABS="$PWD"
 
-# Registra o worktree como workspace no herdr pra aparecer no menu lateral
-if command -v herdr >/dev/null 2>&1; then
-    herdr worktree open --cwd "$WT_ABS" --path "$WT_ABS" --no-focus >/dev/null \
-        || echo "Falha ao abrir no herdr; rode: herdr worktree open --path $WT_ABS"
+# Registra o worktree no herdr (menu lateral). O "worktree open" precisa partir do workspace do repo principal,
+# não do worktree; o herdr-sync-worktrees já resolve isso, então delega pra ele
+if command -v herdr-sync-worktrees >/dev/null 2>&1; then
+    herdr-sync-worktrees "$REPO_ROOT" || echo "Falha ao abrir no herdr; rode: herdr-sync-worktrees $REPO_ROOT"
 fi
 
 # O remote-cli do VSCode precisa do socket IPC; fora de um terminal do VSCode ele costuma estar ausente/vencido
